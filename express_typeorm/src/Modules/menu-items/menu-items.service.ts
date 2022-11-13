@@ -103,7 +103,6 @@ export class MenuItemsService {
       }
 
       const items: any = this.getNestedItems(root, itemsByParent);
-      console.log(items, 'items')
 
       return items;
     } catch(err) {
