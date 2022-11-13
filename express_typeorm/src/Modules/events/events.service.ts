@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Event } from './entities/event.entity';
 import App from "../../app";
 
@@ -176,6 +176,18 @@ export class EventsService {
     ```
      */
   async getFutureEventWithWorkshops() {
-    throw new Error('TODO task 2');
+    try {
+      const events = await this.eventRepository 
+        .createQueryBuilder('event')
+        .innerJoinAndSelect('event.workshops', 'workshops')
+        .where('workshops.start > :date', { date: new Date() })
+        .getMany();
+
+      return events;
+
+    } catch(err) {
+      console.log(err, 'err')
+      throw err;
+    }
   }
 }
