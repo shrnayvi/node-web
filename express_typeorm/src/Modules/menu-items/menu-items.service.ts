@@ -86,6 +86,42 @@ export class MenuItemsService {
   */
 
   async getMenuItems() {
-    throw new Error('TODO in task 3');
+    try {
+      const _items = await this.menuItemRepository.find()
+
+      const itemsByParent: any = {};
+      const root = [];
+
+      for (let item of _items) {
+        if(!item.parentId) {
+          root.push(item);
+        } else if(itemsByParent[item.parentId]) {
+          itemsByParent[item.parentId].push(item);
+        } else {
+          itemsByParent[item.parentId] = [item];
+        }
+      }
+
+      const items: any = this.getNestedItems(root, itemsByParent);
+      console.log(items, 'items')
+
+      return items;
+    } catch(err) {
+      console.log(err, 'err')
+      throw err;
+    }
+  }
+
+  getNestedItems = (parents: any, itemsByParent: any) => {
+    for(let parent of parents) {
+      if(itemsByParent[parent.id]) {
+        parent.children = itemsByParent[parent.id];
+        this.getNestedItems(parent.children ?? [], itemsByParent);
+      } else {
+        parent.children = [];
+      }
+    }
+
+    return parents;
   }
 }
