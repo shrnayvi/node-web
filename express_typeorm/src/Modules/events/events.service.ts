@@ -90,8 +90,22 @@ export class EventsService {
     ]
     ```
      */
-
   async getEventsWithWorkshops() {
+    try {
+      const result = await this.eventRepository.find({
+        relations: ['workshops'],
+        order: {
+          id: 'ASC',
+          workshops: {
+            id: 'ASC',
+          }
+        }
+      });
+
+      return result;
+    } catch(err) {
+
+    }
     throw new Error('TODO task 1');
   }
 
